@@ -1,4 +1,5 @@
 var express = require('express');
+var _ = require('lodash');
 var router = express.Router();
 
 function Person(body) {
@@ -13,7 +14,7 @@ Person.prototype.greet = function() {
 };
 
 Person.prototype.howManyApples = function(first_argument) {
-  return this.name + ' has ' + apples + ' apples';
+  return this.name + ' has ' + this.apples + ' apples';
 };
 
 Person.prototype.greetPet = function(pet) {
@@ -21,24 +22,40 @@ Person.prototype.greetPet = function(pet) {
 };
 
 Person.prototype.greetPets = function(first_argument) {
+
+  self = this;
   this.petGreeting = [];
-  if (typeof this.pets === 'array') {
-    pets.forEach(function(pet) {
-      this.petGreeting.push(this.greetPet(pet));
+  if (typeof this.pets === 'object') {
+    this.pets.forEach(function(pet) {
+      self.petGreeting.push(self.greetPet(pet));
     });
   } else {
-    this.petGreeting.push(this.greetPet(pet));
+
+    this.petGreeting.push(self.greetPet(pet));
   }
-  return = this.petGreeting.join();
+  return this.petGreeting.join();
 };
 
-router.post('/', function(req, res, next) {
+router.get('/', function(req, res, next) {
+
+
+  if (_.isEmpty(req.body)) {
+    req.body = {
+      "name": "hitest",
+      "pets": ['scooby', 'do']
+    }
+  }
+
+  var body = req.body;
+
   var _person = new Person(req.body);
   res.json({
-  	greeting: _person.greet(),
+    greeting: _person.greet(),
     apples: _person.howManyApples(),
     greetPets: _person.greetPets()
+
   });
+  res.end();
 });
 
 module.exports = router;
