@@ -31,7 +31,7 @@ Person.prototype.greetPets = function(first_argument) {
     });
   } else {
 
-    this.petGreeting.push(self.greetPet(pet));
+    self.petGreeting.push(self.greetPet(pet));
   }
   return this.petGreeting.join();
 };
